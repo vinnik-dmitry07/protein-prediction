@@ -1,0 +1,40 @@
+{
+    "filename": "7ahl.cif",
+    "number_of_chains": 7,
+    "sequence_chain": "E",
+    "sequence": "ADSDINIKTGTTDIGSNTTVKTGDLVTYDKENGMHKKVFYSFIDDKNHNKKLLVIRTKGTIAGQYRVYSEEGANKSGLAWPSAFKVQLQLPDNEVAQISDYYPRNSIDTKEYMSTLTYGFNGNVTGDDTGKIGGLIGANVSIGHTLKYVQPDFKTILESPTDKKVGWKVIFNNMVNQNWGPYDRDSWNPVYGNQLFMKTRNGSMKAADNFLDPNKASSLLSSGFSPDFATVITMDRKASKQQTNIDVIYERVRDDYQLHWTSTNWKGTNTKDKWTDRSSERYKIDWEKEEMTN",
+    "water_molecules_chain": "B",
+    "number_of_water_molecules": 128,
+    "ca_distance_same_chains": {
+        "chain_1": "G",
+        "id_1": 182,
+        "chain_2": "G",
+        "id_2": 204,
+        "result": 22
+    },
+    "ca_distance_diff_chains": {
+        "chain_1": "F",
+        "id_1": 19,
+        "chain_2": "C",
+        "id_2": 30,
+        "result": 67
+    },
+    "bfactors": {
+        "A": "bfactor/bfactor_A.npy",
+        "B": "bfactor/bfactor_B.npy",
+        "C": "bfactor/bfactor_C.npy",
+        "D": "bfactor/bfactor_D.npy",
+        "E": "bfactor/bfactor_E.npy",
+        "F": "bfactor/bfactor_F.npy",
+        "G": "bfactor/bfactor_G.npy"
+    },
+    "contacts": {
+        "A": "contact/contact_A.npy",
+        "B": "contact/contact_B.npy",
+        "C": "contact/contact_C.npy",
+        "D": "contact/contact_D.npy",
+        "E": "contact/contact_E.npy",
+        "F": "contact/contact_F.npy",
+        "G": "contact/contact_G.npy"
+    }
+}
