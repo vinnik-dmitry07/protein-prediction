@@ -25,6 +25,7 @@ gencode = { 'ATA':'I', 'ATC':'I', 'ATT':'I', 'ATG':'M',
     'TAC':'Y', 'TAT':'Y', 'TAA':'*', 'TAG':'*',
     'TGC':'C', 'TGT':'C', 'TGA':'*', 'TGG':'W' }
 
+
 def get_orfs(sequence, min_num_aa):
     """
     Find and return all ORFs within the provided genome sequence.
