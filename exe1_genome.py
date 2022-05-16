@@ -1,6 +1,3 @@
-from Bio.Data.CodonTable import standard_dna_table
-
-
 class Genome:
 
     def __init__(self, genome):
@@ -49,12 +46,76 @@ class Genome:
                  The keys are the 20 different amino acids, the values are the
                  corresponding frequencies (rounded to 6 digits).
         """
+        acids = ['K', 'N', 'T', 'R', 'S', 'I', 'M', 'Q', 'H', 'P', 'L', 'E', 'D', 'A', 'G', 'V', 'Y', 'C', 'W', 'F']
+        stop_codons = ['TAA', 'TAG', 'TGA']
+        forward_table = {
+            'TTT': 'F',
+             'TTC': 'F',
+             'TTA': 'L',
+             'TTG': 'L',
+             'TCT': 'S',
+             'TCC': 'S',
+             'TCA': 'S',
+             'TCG': 'S',
+             'TAT': 'Y',
+             'TAC': 'Y',
+             'TGT': 'C',
+             'TGC': 'C',
+             'TGG': 'W',
+             'CTT': 'L',
+             'CTC': 'L',
+             'CTA': 'L',
+             'CTG': 'L',
+             'CCT': 'P',
+             'CCC': 'P',
+             'CCA': 'P',
+             'CCG': 'P',
+             'CAT': 'H',
+             'CAC': 'H',
+             'CAA': 'Q',
+             'CAG': 'Q',
+             'CGT': 'R',
+             'CGC': 'R',
+             'CGA': 'R',
+             'CGG': 'R',
+             'ATT': 'I',
+             'ATC': 'I',
+             'ATA': 'I',
+             'ATG': 'M',
+             'ACT': 'T',
+             'ACC': 'T',
+             'ACA': 'T',
+             'ACG': 'T',
+             'AAT': 'N',
+             'AAC': 'N',
+             'AAA': 'K',
+             'AAG': 'K',
+             'AGT': 'S',
+             'AGC': 'S',
+             'AGA': 'R',
+             'AGG': 'R',
+             'GTT': 'V',
+             'GTC': 'V',
+             'GTA': 'V',
+             'GTG': 'V',
+             'GCT': 'A',
+             'GCC': 'A',
+             'GCA': 'A',
+             'GCG': 'A',
+             'GAT': 'D',
+             'GAC': 'D',
+             'GAA': 'E',
+             'GAG': 'E',
+             'GGT': 'G',
+             'GGC': 'G',
+             'GGA': 'G',
+             'GGG': 'G'
+        }
+
         codon_dist = self.get_codon_dist()
-        acid_dist = {acid: 0 for acid in standard_dna_table.back_table.keys() - {None}}
-        stop_codons_sum = sum(codon_dist[c[0]][c[1]][c[2]] for c in standard_dna_table.stop_codons)
-        for codon, acid in standard_dna_table.forward_table.items():
-            if codon is None:
-                continue
+        acid_dist = {a: 0 for a in acids}
+        stop_codons_sum = sum(codon_dist[c[0]][c[1]][c[2]] for c in stop_codons)
+        for codon, acid in forward_table.items():
             acid_dist[acid] += codon_dist[codon[0]][codon[1]][codon[2]]
         acid_dist = {acid: round(p / (1 - stop_codons_sum), 6) for acid, p in acid_dist.items()}
         return acid_dist
