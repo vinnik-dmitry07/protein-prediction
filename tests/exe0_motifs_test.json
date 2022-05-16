@@ -1,5 +1,5 @@
 {
-    "test_1": {"input": [0, "ACGT", "ACGGATCGGACGTAGT"], "output": [[9, 4]]},
+
     "test_2": {"input": [1, "AC", "ACGG"], "output": [[0, 1], [0, 2], [0, 3], [1, 1]]},
     "test_3": {
         "input": [1, "TT", "TTTTTTTTTT"],

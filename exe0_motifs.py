@@ -36,4 +36,11 @@ def levenshteinDistance(s, t):
 # most max edit distance
 
 def find_similar_motifs(max_edit_distance, motif, dna):
-    return []
+    res = []
+    for l in range(1, len(motif) + max_edit_distance + 1):
+        for i in range(len(dna) - l + 1):
+            subseq = dna[i:i+l]
+            dist = levenshteinDistance(motif, subseq)
+            if dist <= max_edit_distance:
+                res.append([i, l])
+    return res
