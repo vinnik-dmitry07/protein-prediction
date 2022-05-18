@@ -213,7 +213,10 @@ def test_pdb_get_bfactors_x5(test_pdb_get_bfactors):
 def test_pdb_get_contact_map(pdb_parser, json_data, relative_path):
     contacts = json_data['contacts']
     for chain, file in contacts.items():
-        c_map = pdb_parser.get_contact_map(chain)
+        try:
+            c_map = pdb_parser.get_contact_map(chain)
+        except Exception:
+            raise AssertionError('Error in PDB_Parser.get_contact_map().') from None
 
         try:
             passed = (type(c_map) == np.ndarray and c_map.dtype == np.int64)
