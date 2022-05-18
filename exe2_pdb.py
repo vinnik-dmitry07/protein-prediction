@@ -85,7 +85,7 @@ class PDB_Parser:
         """
         c1 = self.get_chain(chain_id_1)
         c2 = self.get_chain(chain_id_2)
-        return int(1)
+        return int(np.linalg.norm(c1[index_1]['CA'].coord - c2[index_2]['CA'].coord))
 
     # 2.12 Contact Map  
     def get_contact_map(self, chain_id):
@@ -104,9 +104,9 @@ class PDB_Parser:
         r = [ri for ri in self.get_chain(chain_id).get_residues() if 'CA' in ri]
         rn = len(r)
         contact_map = np.zeros((rn, rn), dtype=np.float32)
-        for i in range(rn):
-            for j in range(rn):
-                contact_map[i][j] = self.get_ca_distance(chain_id, i + 1, chain_id, j + 1)
+        for i, r1 in enumerate(r):
+            for j, r2 in enumerate(r):
+                contact_map[i][j] = self.get_ca_distance(chain_id, r1.id[1], chain_id, r2.id[1])
         return contact_map.astype(np.int64)  # return rounded (integer) values
 
     # 2.13 B-Factors    
