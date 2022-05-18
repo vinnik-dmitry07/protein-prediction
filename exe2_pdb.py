@@ -101,7 +101,7 @@ class PDB_Parser:
                 in a chain of a Biopython.PDB structure.
                 Only integer values of the distance have to be given (see below).
         """
-        r = [ri for ri in self.get_chain(chain_id).get_residues() if ri.get_resname() != 'HOH']
+        r = [ri for ri in self.get_chain(chain_id).get_residues() if 'CA' in ri]
         rn = len(r)
         contact_map = np.zeros((rn, rn), dtype=np.float32)
         for i in range(rn):
