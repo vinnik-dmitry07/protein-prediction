@@ -20,7 +20,8 @@ class PDB_Parser:
         self.structure = MMCIFParser().get_structure('7AHL', path)
 
     def get_chain(self, chain_id):
-        return next(c for c in self.structure.get_chains() if c.id == chain_id)
+        return self.structure[0][chain_id]
+        # return next(c for c in self.structure.get_chains() if c.id == chain_id)
 
     # 2.8 Chains    
     def get_number_of_chains(self):
@@ -106,7 +107,8 @@ class PDB_Parser:
         contact_map = np.zeros((rn, rn), dtype=np.float32)
         for i, r1 in enumerate(r):
             for j, r2 in enumerate(r):
-                contact_map[i][j] = self.get_ca_distance(chain_id, r1.id[1], chain_id, r2.id[1])
+                if i < j:
+                    contact_map[i][j] = contact_map[j][i] = self.get_ca_distance(chain_id, r1.id[1], chain_id, r2.id[1])
         return contact_map.astype(np.int64)  # return rounded (integer) values
 
     # 2.13 B-Factors    
