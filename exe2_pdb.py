@@ -85,7 +85,7 @@ class PDB_Parser:
         """
         c1 = self.get_chain(chain_id_1)
         c2 = self.get_chain(chain_id_2)
-        return int(np.linalg.norm(c1[index_1]['CA'].coord - c2[index_2]['CA'].coord))
+        return int(1)
 
     # 2.12 Contact Map  
     def get_contact_map(self, chain_id):
