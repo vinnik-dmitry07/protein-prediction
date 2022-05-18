@@ -101,11 +101,12 @@ class PDB_Parser:
                 in a chain of a Biopython.PDB structure.
                 Only integer values of the distance have to be given (see below).
         """
-        rn = len(list(self.get_chain(chain_id).get_residues())) - self.get_number_of_water_molecules(chain_id)
+        r = [ri for ri in self.get_chain(chain_id).get_residues() if ri.get_resname() != 'HOH']
+        rn = len(r)
         contact_map = np.zeros((rn, rn), dtype=np.float32)
-        # for i in range(rn):
-        #     for j in range(rn):
-        #         contact_map[i][j] = self.get_ca_distance(chain_id, i + 1, chain_id, j + 1)
+        for i in range(rn):
+            for j in range(rn):
+                contact_map[i][j] = self.get_ca_distance(chain_id, i + 1, chain_id, j + 1)
         return contact_map.astype(np.int64)  # return rounded (integer) values
 
     # 2.13 B-Factors    
