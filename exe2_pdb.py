@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+from Bio.Data.SCOPData import protein_letters_3to1
 from Bio.PDB.MMCIFParser import MMCIFParser  # Tip: This module might be useful for parsing...
 import numpy as np
 
@@ -17,7 +17,10 @@ class PDB_Parser:
             Tip: Store the parsed structure in an object variable instead of parsing it
             again & again ...
         """
-        self.structure = None  # Parse the structure once and re-use it in the functions below
+        self.structure = MMCIFParser().get_structure('7AHL', path)
+
+    def get_chain(self, chain_id):
+        return next(c for c in self.structure.get_chains() if c.id == chain_id)
 
     # 2.8 Chains    
     def get_number_of_chains(self):
@@ -27,8 +30,7 @@ class PDB_Parser:
             Return:
                 Number of chains in this structure as integer.
         """
-        n_chains = 42
-        return n_chains
+        return len(list(self.structure.get_chains()))
 
     # 2.9 Sequence  
     def get_sequence(self, chain_id):
@@ -41,8 +43,8 @@ class PDB_Parser:
                 Return the amino acid sequence (single-letter alphabet!) of a given chain (chain_id)
                 in a Biopython.PDB structure as a string.
         """
-        sequence = 'SEQWENCE'
-        return sequence
+        return ''.join([protein_letters_3to1[r.get_resname()] for r in self.get_chain(chain_id).get_residues()
+                        if r.get_resname() in protein_letters_3to1])
 
     # 2.10 Water molecules
     def get_number_of_water_molecules(self, chain_id):
@@ -55,8 +57,7 @@ class PDB_Parser:
                 Return the number of water molecules of a given chain (chain_id)
                 in a Biopython.PDB structure as an integer.
         """
-        n_waters = 12
-        return n_waters
+        return len([r for r in self.get_chain(chain_id).get_residues() if r.get_resname() == 'HOH'])
 
     # 2.11 C-alpha distance
     def get_ca_distance(self, chain_id_1, index_1, chain_id_2, index_2):
@@ -82,9 +83,9 @@ class PDB_Parser:
             Different chains in a PDB structure can either occur between two different proteins
             (Heterodimers) or between different copies of the same protein (Homodimers).
         """
-
-        ca_distance = 12.56
-        return int(ca_distance)
+        c1 = self.get_chain(chain_id_1)
+        c2 = self.get_chain(chain_id_2)
+        return int(np.linalg.norm(c1[index_1]['CA'].coord - c2[index_2]['CA'].coord))
 
     # 2.12 Contact Map  
     def get_contact_map(self, chain_id):
@@ -100,9 +101,11 @@ class PDB_Parser:
                 in a chain of a Biopython.PDB structure.
                 Only integer values of the distance have to be given (see below).
         """
-
-        length = 10
-        contact_map = np.zeros((length, length), dtype=np.float32)
+        rn = len(list(self.get_chain(chain_id).get_residues())) - self.get_number_of_water_molecules(chain_id)
+        contact_map = np.zeros((rn, rn), dtype=np.float32)
+        for i in range(rn):
+            for j in range(rn):
+                contact_map[i][j] = self.get_ca_distance(chain_id, i + 1, chain_id, j + 1)
         return contact_map.astype(np.int64)  # return rounded (integer) values
 
     # 2.13 B-Factors    
@@ -125,9 +128,11 @@ class PDB_Parser:
                 You have to use np.nanmean, np.nanvar etc. if you have nan values in your array.
                 The returned data structure has to be a numpy array rounded again to integer.
         """
-        length = 10
-        b_factors = np.array(length, dtype=np.float32)
-        return b_factors.astype(np.int64)  # return rounded (integer) values
+        r = list(self.get_chain(chain_id).get_residues())
+        b = np.array([np.nanmean([a.bfactor for a in ri.get_atoms()]) for ri in r if ri.get_resname() != 'HOH'])
+        b -= b.mean()
+        b /= b.std()
+        return b.astype(np.int64)  # return rounded (integer) values
 
 
 def main():

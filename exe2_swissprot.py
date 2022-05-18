@@ -13,8 +13,7 @@ class SwissProt_Parser:
             Tip: Store the parsed XML entry in an object variable instead of parsing it
             again & again ...
         """
-
-        self.sp_anno = None  # Parse the XML file once and re-use it in the functions below
+        self.record = self.PARSER.read(path, frmt)  # Parse the XML file once and re-use it in the functions below
 
     # 2.2 SwissProt Identification
     def get_sp_identification(self):
@@ -27,8 +26,11 @@ class SwissProt_Parser:
                                     2. string: Primary protein name
                                     3. string: Primary gene name
         """
-        identifier = 'identifier'
-        return identifier
+        return (
+            self.record.id,
+            self.record.annotations['recommendedName_fullName'][0],
+            self.record.annotations['gene_name_primary'],
+        )
 
     # 2.3 SwissProt Sequence Information
     def get_sp_sequence_info(self):
@@ -41,8 +43,11 @@ class SwissProt_Parser:
                                     2. int: sequence length of the UniProt entry
                                     3. int: sequence mass of the UniProt entry
         """
-        seq_len = 42
-        return seq_len
+        return (
+            str(self.record.seq),
+            self.record.annotations['sequence_length'],
+            self.record.annotations['sequence_mass'],
+        )
 
     # 2.4 Organism 
     def get_organism(self):
@@ -53,9 +58,7 @@ class SwissProt_Parser:
                 Return the name of the organsim as stated in the corresponding field
                 of the XML data. Return value has to be a string.
         """
-
-        organism = 'organism'
-        return organism
+        return self.record.annotations['organism']
 
     # 2.5 Localizations
     def get_localization(self):
@@ -63,13 +66,11 @@ class SwissProt_Parser:
             Input:
                 self: Use XML entry which has been parsed & saved during object initialization
             Return:
-                Return the name of the subcellular localization as stated in the
+                Return the name of the subcellular localization as stcated in the
                 corresponding field.
                 Return value has to be a list of strings.
         """
-
-        localization = ['localization_1', 'localization_2']
-        return localization
+        return self.record.annotations['comment_subcellularlocation_location']
 
     # 2.6 Cross-references to PDB
     def get_pdb_support(self):
@@ -80,9 +81,8 @@ class SwissProt_Parser:
                 Returns a list of all PDB IDs which support the annotation of the
                 given SwissProt XML file. Return the PDB IDs as list.
         """
-
-        pdb_ids = ['pdb_id_1', 'pdb_id_2']
-        return pdb_ids
+        prefix = 'PDB:'
+        return [r.removeprefix(prefix) for r in self.record.dbxrefs if r.startswith(prefix)]
 
 
 def main():
