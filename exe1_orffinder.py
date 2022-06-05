@@ -50,11 +50,9 @@ def get_orfs(sequence, min_num_aa):
                 a = t[t.index('M'):]
                 if len(a) >= min_num_aa:
                     index = aa.index(a) * 3 + i
-                    if index > len(s) - i:
-                        continue
+                    index = index % len(s)
                     if reverse:
                         index = len(s) - index - 1
-                    assert 0 <= index <= len(s) - 1
                     res.append((index, (len(a) + 1) * 3, str(a), reverse))
     res = list(set(res))
     return res
