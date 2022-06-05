@@ -42,7 +42,7 @@ def get_orfs(sequence, min_num_aa):
     res = []
     for s, reverse in [(sequence, False), (complementary(sequence)[::-1], True)]:
         for i in range(3):
-            s1 = s[i:] + s[:i] + s[i:] + s[:i] + s[i:] + s[:i] + s[i:]
+            s1 = s[i:] + s[:i] + s[i:]
             aa = ''.join(gencode[s1[j:j+3]] for j in range(0, 3 * (len(s1) // 3), 3))
             for t in aa.split('*')[:-1]:
                 if 'M' not in t:
@@ -54,6 +54,7 @@ def get_orfs(sequence, min_num_aa):
                         continue
                     if reverse:
                         index = len(s) - index - 1
+                    assert 0 <= index <= len(s) - 1
                     res.append((index, (len(a) + 1) * 3, str(a), reverse))
     res = list(set(res))
     return res
