@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 import numpy as np
 
 from pathlib import Path
@@ -12,15 +14,17 @@ ATTENTION: Use the following dictionaries to get the correct index for each
 ALPHABET = 'ACDEFGHIKLMNPQRSTVWY'
 AA_TO_INT = {aa: index for index, aa in enumerate(ALPHABET)}
 INT_TO_AA = {index: aa for index, aa in enumerate(ALPHABET)}
+WORD_SIZE = 3
 
 
 class BlastDB:
-
     def __init__(self):
         """
         Initialize the BlastDB class.
         """
-        pass
+        self.id_seq = {}
+        self.word_num = []
+        self.word_ids = defaultdict(set)
 
     def add_sequence(self, sequence):
         """
@@ -28,7 +32,12 @@ class BlastDB:
 
         :param sequence: a protein sequence (string).
         """
-        pass
+        id_ = len(self.id_seq)
+        self.id_seq[id_] = sequence
+        words = set(sequence[i:i + WORD_SIZE] for i in range(len(sequence) - WORD_SIZE + 1))
+        self.word_num.append(len(words))
+        for w in words:
+            self.word_ids[w].add(id_)
 
     def get_sequences(self, word):
         """
@@ -38,7 +47,8 @@ class BlastDB:
 
         :return: List with sequences.
         """
-        return ['NOPE']
+        ids = self.word_ids[word]
+        return [self.id_seq[i] for i in ids]
 
     def get_db_stats(self):
         """
@@ -51,7 +61,13 @@ class BlastDB:
         :return: Tuple with four integer numbers corrsponding to the mentioned
                  statistics (in order of listing above).
         """
-        return (1, 2, 3, 4)
+        seq_num = list(map(len, self.word_ids.values()))
+        return (
+            len(self.id_seq),
+            len(self.word_ids),
+            round(sum(self.word_num) / len(self.word_num)),
+            round(sum(seq_num) / len(seq_num)),
+        )
 
 
 class Blast:
