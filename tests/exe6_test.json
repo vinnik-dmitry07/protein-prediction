@@ -1,0 +1,17 @@
+{   
+    "parameters" : {
+    "learning_rate" : 0.1,
+    "nepochs" : 100,
+    "seed" : 420
+    },
+    "bias":                         "helper/bias_solution.npz",
+    "hinge":                        "helper/hinge_solution.npz",
+    "delta_hinge":                  "helper/delta_hinge_solution.npz",
+    "l2_loss":                      "helper/l2_solution.npz",
+    "delta_l2":                     "helper/delta_l2_solution.npz",
+    "sigmoid":                      "helper/sigmoid_solution.npy",
+    "perceptron":                   "perceptrons/perceptron_solution.npy",
+    "perceptron_bias":              "perceptrons/perceptron_bias_solution.npy",
+    "multiperceptron_bias":         "perceptrons/multiperceptron_bias_solution.npy",
+    "multiperceptron_bias_nonlin":  "perceptrons/multiperceptron_bias_nonlin_solution.npy"
+}
