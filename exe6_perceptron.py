@@ -87,7 +87,13 @@ class Perceptron:
                 In case of a 2D numpy array, add a single 1 to every row.
                 E.g. [[ 0, 0 ], [0, 0]] should become [[0, 0, 1], [0, 0, 1]].
         '''
-        return None # add bias term to arr and return it
+        if len(arr.shape) == 1:
+            arr = np.append(arr, 1)
+        elif len(arr.shape) == 2:
+            arr = np.column_stack((arr, [1] * arr.shape[0]))
+        else:
+            raise ValueError(arr.shape)
+        return arr
 
 
     def _hinge_loss( self, y, y_pred ):
@@ -104,7 +110,7 @@ class Perceptron:
             Output:
                 Hinge loss based on the predicted class (y_pred) and true class (y)
         '''
-        hinge_loss = None # calculate hinge loss based on y & y_pred
+        hinge_loss = np.maximum(1 - y * y_pred, 0)
         return hinge_loss
 
     def _delta_hinge( self, y, y_pred ):
@@ -123,8 +129,10 @@ class Perceptron:
                 Derivative of the hinge loss function based on the 
                 predicted class (y_pred) and true class (y)
         '''
-        delta_hinge = None # calculate derivative of hinge_loss based on y & y_pred
-        return delta_hinge 
+        delta_hinge = np.zeros_like(y)
+        delta_hinge[y_pred * y < 1] = -y
+        return delta_hinge  # calculate derivative of hinge_loss based on y & y_pred
+
 
     def _l2_loss( self, y, y_pred ):
         '''
@@ -141,7 +149,7 @@ class Perceptron:
                 L2 loss based on true class label (y) and prediction (y_pred)
 
         '''
-        l2_loss = None
+        l2_loss = np.mean(np.sum(np.square(y - y_pred))) / 2
         return l2_loss # calculate l2 loss based on y & y_pred
 
     def _delta_l2( self, y, y_pred ):
@@ -159,7 +167,7 @@ class Perceptron:
                 Derivative of L2 loss based on true class label (y) and 
                 the prediction (y_pred)
         '''
-        delta_l2 = None # calculate l2 loss based on y & y_pred
+        delta_l2 = -np.mean(y - y_pred)  # calculate l2 loss based on y & y_pred
         return delta_l2
 
     def _sigmoid( self, x):
@@ -177,7 +185,7 @@ class Perceptron:
             Output:
                 Sigmoid transformation of input x
         '''
-        sigmoid = None
+        sigmoid = 1 / (1 + np.exp(-x))
         return sigmoid # calculate sigmoid based on input x
 
     def single_perceptron( self ):
@@ -215,10 +223,10 @@ class Perceptron:
         for epoch in range(self.nEpochs): # for each training epoch
             for index, x in enumerate( self.IN ): # for each 'sample' in the input data
 
-                y      = None # get target label for input; use OR gate states
+                y      =  self.OR[index]  # get target label for input; use OR gate states
 
                 # forward pass: Make predictions for input
-                y_pred = None # get predictions
+                y_pred = w1 @ x # get predictions
 
                 # backward pass: Update weight(s) based on discrepancy between
                 # predicted and true target; use _hinge_loss to measure loss 
@@ -228,7 +236,7 @@ class Perceptron:
 
                 # update weights here based on learning rate, dw and 
                 # inputs from previous layer
-                w1   -= 0
+                w1   -= self.learning_rate * dw * x
 
         # return weights after training
         return w1
@@ -259,10 +267,10 @@ class Perceptron:
         for epoch in range(self.nEpochs): # for every epoch
             for index, x in enumerate( X ): # for every 'sample' in the input data
 
-                y      = None # get target label for input; use OR gate states
+                y      = self.OR[index]  # get target label for input; use OR gate states
 
                 # forward pass: Make predictions for input
-                y_pred = None # get predictions
+                y_pred = w1 @ x  # get predictions
 
                 # backward pass: Update weight(s) based on discrepancy between
                 # predicted and true target
@@ -271,7 +279,7 @@ class Perceptron:
 
                 # update weights here based on learning rate, dw and 
                 # inputs from previous layer
-                w1   -= 0
+                w1   -= self.learning_rate * dw * x
 
         # return weights after training
         return w1
@@ -328,21 +336,21 @@ class Perceptron:
             for index, x in enumerate( X ): # for every sample in the dataset
 
                 # Forward pass
-                y      = None # get target label for input; now XOR
-                h      = None # forward pass; inputs to hidden
+                y      = self.XOR[index] # get target label for input; now XOR
+                h      = x[np.newaxis] @ w1  # forward pass; inputs to hidden
                 h_bias = self._add_bias( h ) # add bias to intermediate layer
-                y_pred = None # hidden to output
+                y_pred = h_bias @ w2 # hidden to output
 
                 # backward pass: Update weight(s) based on discrepancy between
                 # predicted and true target. Watch out: Backward pass differs
                 # between output to hidden update and hidden to hidden updates.
                 loss        = self._l2_loss( y, y_pred  )
                 grad_y_pred = self._delta_l2( y, y_pred )
-                dw2 = None
-                dw1 = None
+                dw2 = grad_y_pred
+                dw1 = dw2 * w2
 
-                w1 -= 0
-                w2 -= 0
+                w1 -= self.learning_rate * x[:, np.newaxis] @ dw1[:-1][np.newaxis]
+                w2 -= self.learning_rate * dw2 * h_bias.ravel()
 
         # return the weights in the hidden layer after training
         return w2
@@ -379,22 +387,25 @@ class Perceptron:
             for index, x in enumerate( X ): # for every sample in the data set
 
                 # Forward pass
-                y      = None # get target label for input; now XOR
-                h      = None # forward pass; inputs to hidden.
-                h_non_lin = None # use non-linear transformation (here: sigmoid)
+                y      = self.XOR[index] # get target label for input; now XOR
+
+                h      = x[np.newaxis] @ w1  # forward pass; inputs to hidden.
+                h_non_lin = self._sigmoid(h) # use non-linear transformation (here: sigmoid)
                 h_bias = self._add_bias( h_non_lin ) # add bias to intermediate layer
-                y_pred = None # hidden to output
+                y_pred = h_bias @ w2 # hidden to output
 
                 # backward pass: Update weight(s) based on discrepancy between
                 # predicted and true target. Watch out: Backward pass differs
                 # between output to hidden update and hidden to hidden updates.
                 loss        = self._l2_loss( y, y_pred  )
                 grad_y_pred = self._delta_l2( y, y_pred )
-                dw2 = None
-                dw1 = None
+                dw2 = grad_y_pred
+                dw1 = dw2 * w2
 
-                w1 -= 0
-                w2 -= 0
+                sigma = h_non_lin * (1 - h_non_lin)
+
+                w1 -= self.learning_rate * x[:, np.newaxis] @ (sigma * dw1[:-1][np.newaxis])
+                w2 -= self.learning_rate * dw2 * h_bias.ravel()
 
         # return the weights in the hidden layer after training
         return w2
