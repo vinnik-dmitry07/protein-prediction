@@ -1,0 +1,26 @@
+{
+    "filename": "P09616.xml",
+    "identification": [
+        "P09616",
+        "Alpha-hemolysin",
+        "hly"
+    ],
+    "seq_info": [
+        "MKTRIVSSVTTTLLLGSILMNPVAGAADSDINIKTGTTDIGSNTTVKTGDLVTYDKENGMHKKVFYSFIDDKNHNKKLLVIRTKGTIAGQYRVYSEEGANKSGLAWPSAFKVQLQLPDNEVAQISDYYPRNSIDTKEYMSTLTYGFNGNVTGDDTGKIGGLIGANVSIGHTLKYVQPDFKTILESPTDKKVGWKVIFNNMVNQNWGPYDRDSWNPVYGNQLFMKTRNGSMKAADNFLDPNKASSLLSSGFSPDFATVITMDRKASKQQTNIDVIYERVRDDYQLHWTSTNWKGTNTKDKWTDRSSERYKIDWEKEEMTN",
+        319,
+        35904
+    ],
+    "organism": "Staphylococcus aureus",
+    "localization": [
+        "Secreted"
+    ],
+    "pdb_support": [
+        "3M2L",
+        "3M3R",
+        "3M4D",
+        "3M4E",
+        "4IDJ",
+        "4YHD",
+        "7AHL"
+    ]
+}
