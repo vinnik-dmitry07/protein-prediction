@@ -1,5 +1,7 @@
 # Protein Prediction assignments from TUM
 
+### [Notes](notes.pdf)
+
 ### Exercise 0:
 * Longest common subsequences
 * Shortest common supersequences
@@ -26,3 +28,6 @@
 
 ### Exercise 6:
 * Numpy Perceptron
+
+### Exercise 7:
+* AlphaFold (sources are lost)
